@@ -1,0 +1,13 @@
+/build/
+/out/
+/bin/
+/obj/
+/.vs/
+/.idea/
+*.user
+*.sln.docstates
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+*.spv
