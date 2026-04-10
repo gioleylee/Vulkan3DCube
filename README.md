@@ -58,26 +58,9 @@ git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
 cd YOUR_REPO
 ```
 
-### 2. Build with CMake
-
-```bash
-cmake -S . -B build
-cmake --build build
-```
+### 2. Buid with Visual Studio / Set as Startup Project
 
 ### 3. Run the application
-
-```bash
-./build/VulkanRenderer
-```
-
-> On Windows:
-
-```bash
-build\Debug\VulkanRenderer.exe
-```
-
----
 
 ## 🎮 Controls
 
