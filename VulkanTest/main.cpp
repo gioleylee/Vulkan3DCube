@@ -19,6 +19,7 @@
 #include <array>
 #include <optional>
 #include <set>
+#include <filesystem>
 
 // stb_image for texture loading
 #define STB_IMAGE_IMPLEMENTATION
@@ -674,6 +675,9 @@ private:
     }
 
     void createGraphicsPipeline() {
+        ensureShaderBinary("shaders/shader.vert", "shaders/vert.spv");
+        ensureShaderBinary("shaders/shader.frag", "shaders/frag.spv");
+
         auto vertShaderCode = readFile("shaders/vert.spv");
         auto fragShaderCode = readFile("shaders/frag.spv");
 
@@ -1891,11 +1895,74 @@ private:
         return true;
     }
 
+    static std::vector<std::filesystem::path> getCandidatePaths(const std::string& filename) {
+        return {
+            std::filesystem::path(filename),
+            std::filesystem::path("VulkanTest") / filename,
+            std::filesystem::path("..") / filename,
+            std::filesystem::path("..") / "VulkanTest" / filename,
+            std::filesystem::path("..") / ".." / filename,
+            std::filesystem::path("..") / ".." / "VulkanTest" / filename,
+            std::filesystem::path("..") / ".." / ".." / filename,
+            std::filesystem::path("..") / ".." / ".." / "VulkanTest" / filename
+        };
+    }
+
+    static bool tryResolveExistingPath(const std::string& filename, std::filesystem::path& resolvedPath) {
+        for (const auto& candidate : getCandidatePaths(filename)) {
+            if (std::filesystem::exists(candidate)) {
+                resolvedPath = candidate;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static void ensureShaderBinary(const std::string& sourcePath, const std::string& outputPath) {
+        std::filesystem::path resolvedOutput;
+        if (tryResolveExistingPath(outputPath, resolvedOutput)) {
+            return;
+        }
+
+        std::filesystem::path resolvedSource;
+        if (!tryResolveExistingPath(sourcePath, resolvedSource)) {
+            throw std::runtime_error("failed to find shader source: " + sourcePath);
+        }
+
+        auto outputFilename = std::filesystem::path(outputPath).filename();
+        auto targetOutput = resolvedSource.parent_path() / outputFilename;
+
+        std::string sourceArg = "\"" + resolvedSource.string() + "\"";
+        std::string outputArg = "\"" + targetOutput.string() + "\"";
+
+        std::string glslcCmd = "glslc " + sourceArg + " -o " + outputArg;
+        int compileResult = std::system(glslcCmd.c_str());
+
+        if (compileResult != 0) {
+            std::string glslangCmd = "glslangValidator -V " + sourceArg + " -o " + outputArg;
+            compileResult = std::system(glslangCmd.c_str());
+        }
+
+        if (compileResult != 0 || !std::filesystem::exists(targetOutput)) {
+            throw std::runtime_error("failed to compile shader: " + sourcePath + " (install Vulkan SDK tools: glslc or glslangValidator)");
+        }
+    }
+
     static std::vector<char> readFile(const std::string& filename) {
-        std::ifstream file(filename, std::ios::ate | std::ios::binary);
+        std::ifstream file;
+        std::filesystem::path resolvedPath;
+
+        for (const auto& candidate : getCandidatePaths(filename)) {
+            file.open(candidate, std::ios::ate | std::ios::binary);
+            if (file.is_open()) {
+                resolvedPath = candidate;
+                break;
+            }
+            file.clear();
+        }
 
         if (!file.is_open()) {
-            throw std::runtime_error("failed to open file!");
+            throw std::runtime_error("failed to open file: " + filename);
         }
 
         size_t fileSize = (size_t)file.tellg();

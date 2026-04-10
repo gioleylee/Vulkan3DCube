@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\giole\OneDrive\Documents\Visual Studio\Projects\VulkanTest3D\x64\Debug\VulkanTest.exe</FullPath>
+      <FullPath>C:\projects\Vulkan3DCube\x64\Debug\VulkanTest.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
