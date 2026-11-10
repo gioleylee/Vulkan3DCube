@@ -26,12 +26,15 @@ The application renders:
 ## 🧱 Project Structure
 
 ```
-my-vulkan-project/
-├─ src/            # Source code (main Vulkan logic)
-├─ shaders/        # GLSL shaders (vertex & fragment)
-├─ assets/         # Textures and resources
-├─ CMakeLists.txt  # Build configuration
-├─ README.md       # Project documentation
+Vulkan3DCube/
+├─ VulkanTest.slnx            # Visual Studio solution
+├─ VulkanTest/
+│  ├─ VulkanTest.vcxproj
+│  ├─ main.cpp               # all Vulkan setup and rendering
+│  ├─ compile.bat            # compiles the shaders to SPIR-V
+│  ├─ shaders/               # GLSL vertex and fragment shaders
+│  └─ textures/              # cube textures
+├─ README.md
 └─ .gitignore
 ```
 
@@ -42,8 +45,8 @@ my-vulkan-project/
 Make sure you have the following installed:
 
 * Vulkan SDK (LunarG)
-* CMake (>= 3.16)
-* C++ compiler (GCC / Clang / MSVC)
+* Visual Studio 2022 or later with the "Desktop development with C++" workload
+* GLFW and GLM (the project expects them on the include and library paths)
 * GPU with Vulkan support
 * Graphics drivers up to date
 
@@ -54,13 +57,22 @@ Make sure you have the following installed:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-cd YOUR_REPO
+git clone https://github.com/gioleylee/Vulkan3DCube.git
+cd Vulkan3DCube
 ```
 
-### 2. Buid with Visual Studio / Set as Startup Project
+### 2. Compile the shaders
 
-### 3. Run the application
+Run `VulkanTest/compile.bat`. It uses `glslc` from the Vulkan SDK to produce the
+`.spv` files the program loads. They are build outputs and are not committed.
+
+### 3. Build with Visual Studio
+
+Open `VulkanTest.slnx`, select the `x64` platform, and build.
+
+### 4. Run the application
+
+Start it from Visual Studio (`F5`) so that the working directory is `VulkanTest/`.
 
 ## 🎮 Controls
 
@@ -133,7 +145,7 @@ This project is useful for understanding:
 
 ## 📄 License
 
-This project is open source. Add a license here if needed (e.g., MIT).
+No license file has been added yet.
 
 ---
 

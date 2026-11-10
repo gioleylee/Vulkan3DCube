@@ -11,3 +11,17 @@ CMakeCache.txt
 cmake_install.cmake
 compile_commands.json
 *.spv
+
+# Visual Studio build output
+x64/
+x86/
+Debug/
+Release/
+*.exe
+*.pdb
+*.ilk
+*.obj
+*.idb
+*.log
+*.tlog
+*.recipe
